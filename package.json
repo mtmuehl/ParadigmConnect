@@ -1,7 +1,7 @@
 {
-  "name": "paradigm.js",
-  "version": "0.1.17",
-  "description": "JavaScript module for interconnecting the Paradigm Platform to the Ethereum blockchain network.",
+  "name": "paradigm-connect",
+  "version": "0.0.1",
+  "description": "JavaScript module for connecting with Paradigm.",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
