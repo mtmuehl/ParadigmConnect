@@ -66,7 +66,11 @@ describe('Order', () => {
       };
       let o2 = new Order({ subContract, maker: maker, makerArguments, makerValues });
       await o2.make();
-      assert.equal(Signature.recoverAddress(o2.formatData(), o2.makerValues.signature), maker);
+
+      let signature = { v: o2.makerValues.signatureV, r: o2.makerValues.signatureR, s: o2.makerValues.signatureS }
+      let recoveredAddress = Signature.recoverAddress(o2.makerHex(), signature);
+
+      assert.equal(recoveredAddress, maker);
     });
   });
 
@@ -76,7 +80,7 @@ describe('Order', () => {
         tokensToBuy: 100
       };
 
-      (await order._takeEstimateGas(taker, takerValues)).should.be.lt(141700);
+      (await order.estimateGasCost(taker, takerValues)).should.be.lt(141700);
 
       await order.take(taker, takerValues);
 
@@ -97,11 +101,6 @@ describe('Order', () => {
       const newOrder = new Order(json);
       newOrder.recoverMaker().should.eq(maker);
     });
-
-    it("should return the maker if the order doesn't need to be signed", () => {
-      const newOrder = new Order({ subContract: 'f', maker: 'f', makerArguments: [], takerArguments: [], makerValues: {} });
-      newOrder.recoverMaker().should.eq('f');
-    })
   });
 
   describe('recoverPoster()', () => {
