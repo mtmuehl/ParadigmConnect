@@ -1,5 +1,5 @@
-const BasicTradeSubContract = require('paradigm-js-test-solidity/build/contracts/BasicTradeSubContract');
-const BasicTradeSubContractConfig = require('paradigm-js-test-solidity/configuration/BasicTradeSubContract');
+const BasicTradeSubContract = require('./BasicTradeSubContract');
+const BasicTradeSubContractConfig = require('./BasicTradeSubContractConfig');
 
 module.exports = async () => {
   const basicTradeSubContract = await (new web3.eth.Contract(BasicTradeSubContract.abi))
