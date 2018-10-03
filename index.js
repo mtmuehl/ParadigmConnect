@@ -11,8 +11,8 @@ class Paradigm {
   constructor(options = {}) {
     this.web3 = new Web3(options.provider || new Web3.providers.HttpProvider('https://ropsten.infura.io'));
     options.web3 = this.web3;
-    let endpoint                 = options.orderStreamURL || 'https://osd.paradigm.market';
-    this.orderStream             = new OrderStream(endpoint);
+    let endpoint = options.orderStreamURL || 'bs1.paradigm.market';
+    this.orderStream = new OrderStream(endpoint);
     this.orderGateway = new OrderGateway(options);
     this.bank = new Bank(this.web3);
     Order.prototype.web3 = this.web3;
