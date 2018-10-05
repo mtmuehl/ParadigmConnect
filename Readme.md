@@ -71,7 +71,7 @@ Once an order has been signed by the maker, you can recover their Ethereum addre
   order.recoverMaker() // => '0x40a...'
 ```
 
-Similarly, the Paradigm OrderStream requires that whomever is going to post the order (might the maker, might be someone else) also signs the order. To that end, you can use the `prepareForPost()` method.
+Similarly, the Paradigm OrderStream requires that whomever is going to post the order (might be the maker, might be someone else) also signs the order. To that end, you can use the `prepareForPost()` method.
 
 ```javascript
   let poster = ... // get an Ethereum address
@@ -88,7 +88,7 @@ Finally, once an order is made, posted, and discovered by another party, it can 
 
 ## OrderStream
 
-The `OrderStream` class provides convenience methods for interacting with the Paradigm OrderStream (OS) Network.
+The `OrderStream` class provides convenient methods for interacting with the Paradigm OrderStream (OS) Network.
 
 There are two primary methods that you should be aware of: `add()` and `listen()`.
 
