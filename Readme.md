@@ -85,3 +85,39 @@ Finally, once an order is made, posted, and discovered by another party, it can 
 ```javascript
   order.take(taker, takerValues);
 ```
+
+## OrderStream
+
+The `OrderStream` class provides convenience methods for interacting with the Paradigm OrderStream (OS) Network.
+
+There are two primary methods that you should be aware of: `add()` and `listen()`.
+
+The `add()` method can be called once an order has been signed by the `poster`.
+
+```javascript
+  const orderStream = paradigm.orderStream;
+  orderStream.add(order);
+```
+
+The `listen()` method will connect you to the OS via web sockets to pick up incoming order events.
+
+```javascript
+  orderStream.listen((message) => { console.log(message) });
+```
+
+Here is an [example](https://github.com/ParadigmFoundation/connect-demo) of both in action for a front-end web application:
+
+```javascript
+  order.make().then(() => {
+    order.prepareForPost(currentUser).then(() => {
+      orderStream.add(order);
+    })
+  });
+
+  // ...
+
+  orderStream.listen((message) => {
+    console.log(message);
+    $('#orders').append(`<div class='card'><div class='card-body'>${message.data}</div></div>`);
+  });
+```
