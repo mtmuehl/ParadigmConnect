@@ -64,3 +64,16 @@ Additionally, these will be added directly to the `order` object as a method `ma
 ```javascript
   order.makerSignature() // => { v: '...', r: '...', s: '...' }
 ```
+
+Once an order has been signed by the maker, you can recover their Ethereum address by calling:
+
+```javascript
+  order.recoverMaker() // => '0x40a...'
+```
+
+Similarly, the Paradigm OrderStream requires that whomever is going to post the order (might the maker, might be someone else) also signs the order. To that end, you can use the `prepareForPost()` method.
+
+```javascript
+  let poster = ... // get an Ethereum address
+  order.prepareForPost(poster);
+```
