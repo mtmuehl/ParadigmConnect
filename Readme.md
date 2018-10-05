@@ -27,6 +27,23 @@ web3.eth.net.getId().then((networkId) => {
 
 The `Paradigm` class is the top level object through which you will interact with the library. It takes a variety of initialization parameters that you will need to provide.
 
+```javascript
+  const paradigm = new Paradigm({ provider: web3.currentProvider, networkId: networkId });
 ```
 
+## Order
+
+The `Order` class is what you will use to construct and sign orders which you'd like to post to the Paradigm OrderStream to be broadcast to the network.
+
+```javascript
+  const Order = paradigm.Order;
+  let order = new Order({ ... });
 ```
+
+The `Order` constructor takes a javascript object that must contain the following things:
+
+- The subcontract address as `subContract`
+- The maker's address as `maker`
+- The "maker values" object as `makerValues`
+
+Additionally, `makerArguments` and `takerArguments` can be provided or pulled from the SubContract.
