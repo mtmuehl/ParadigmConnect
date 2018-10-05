@@ -49,3 +49,18 @@ The `Order` constructor takes a javascript object that must contain the followin
 Additionally, `makerArguments` and `takerArguments` can be provided or pulled from the SubContract.
 
 An example can be seen [here](https://github.com/ParadigmFoundation/connect-demo).
+
+`Order` has a method called `make()` which will sign the order on behalf of the maker.
+
+```javascript
+  order.make();
+```
+
+This call will append three pieces of a cryptographic signature to the order's `makerValues` field:
+`v`, `r`, and `s`, which will be passed to the smart contract layer when the order is eventually "taken".
+
+Additionally, these will be added directly to the `order` object as a method `makerSignature()` for convenience purposes.
+
+```javascript
+  order.makerSignature() // => { v: '...', r: '...', s: '...' }
+```
