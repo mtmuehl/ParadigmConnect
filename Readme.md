@@ -77,3 +77,11 @@ Similarly, the Paradigm OrderStream requires that whomever is going to post the 
   let poster = ... // get an Ethereum address
   order.prepareForPost(poster);
 ```
+
+This will add a `posterSignature` to the `order` in a similar way that we added the `makerSignature`. One key difference is that this does not get added to the `makerValues` by default. The `poster` is primarily a concern of the OrderStream.
+
+Finally, once an order is made, posted, and discovered by another party, it can be "taken", which posts the order to the on-chain OrderGateway with the taker's details.
+
+```javascript
+  order.take(taker, takerValues);
+```
