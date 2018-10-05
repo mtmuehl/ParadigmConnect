@@ -47,3 +47,5 @@ The `Order` constructor takes a javascript object that must contain the followin
 - The "maker values" object as `makerValues`
 
 Additionally, `makerArguments` and `takerArguments` can be provided or pulled from the SubContract.
+
+An example can be seen [here](https://github.com/ParadigmFoundation/connect-demo).
