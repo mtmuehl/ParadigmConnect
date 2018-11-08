@@ -47,12 +47,30 @@ Order objects which are created, signed and posted to the OrderStream network wi
 
 ### Signing Orders
 
+#### make()
+
 Once an order has been generated, it can be cryptographically signed by calling `order.make()`. The result of this function will be to push `v`, `r`, and `s` values (which represent the signature) to the end of the makerValues array.
 
 When the order is taken, this allows subContracts to verify that the order was indeed created by the maker in the order.
+
+Having the order signed by the maker is strictly optional. Some subContracts do not require a signature. For example, 0x orders are already signed before they come into contact with Paradigm. Therefore, the same signature from the 0x order can be used and does not need to be duplicated.
 
 ```javascript
   order.make();
   console.log(order.makerValues);
   // => [..., 28, '0x23...', '0x56...']
+```
+
+Calling `order.make()` will prompt the user to sign with a tool like MetaMask if they are using a web browser.
+
+#### prepareForPost()
+
+The Paradigm OrderStream network requires that anyone posting to the network sign the order. This is in addition to the maker signature, and it is not optional if you want to use the OrderStream network.
+
+It works essentially the same way as `make()`, except it requires an address as an argument. Also, it doesn't modify the same datastructure. Instead of updating `makerValues`, it directly sets an attribute called `posterSignature`.
+
+```javascript
+  order.prepareForPost('0xF00123Fb59d85e63be29148C4aD582FCEC886B3E');
+  console.log(order.posterSignature);
+  // => Should render signature data structure
 ```
