@@ -96,3 +96,25 @@ Description for `recoverMaker()` also applies here:
 ```
 
 The Paradigm OrderStream makes use of this method to verify that the poster is a valid address according the the Paradigm governance rules (forthcoming).
+
+### Taking Orders
+
+Taking an order means submitting a transaction to the Ethereum blockchain that fulfills the order. In the case of something like 0x, this means that you are completing a trade. In the case of something like Dharma, this means you are funding a loan.
+
+#### `take()`
+
+The `take()` method requires two arguments: an address for the `taker` and an array of `takerValues`. The `takerValues` array will contain values required by the subContract. In a simple trade, this could just be the number of tokens the taker wishes to purchase.
+
+```javascript
+  order.take('0x0988F52Cec741bDfB42aD8D80651005C6D221525', [500]);
+```
+
+If in a web browser, this will prompt the taker to submit the transaction with a tool like MetaMask.
+
+#### `estimateGasCost()`
+
+This is a utility method that will estimate the gas cost of `take()`. It requires exactly the same arguments.
+
+```javascript
+  order.estimateGasCost('0x0988F52Cec741bDfB42aD8D80651005C6D221525', [500]);
+```
