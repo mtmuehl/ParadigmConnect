@@ -118,3 +118,16 @@ This is a utility method that will estimate the gas cost of `take()`. It require
 ```javascript
   order.estimateGasCost('0x0988F52Cec741bDfB42aD8D80651005C6D221525', [500]);
 ```
+
+### Utilities
+
+#### `toJSON()`
+
+This method will convert the order object into a plain JSON object. The JSON object will be structured so that it can be directly passed back into the `new Order()` function as the options hash to reconstitute the order.
+
+```javascript
+  let json = order.toJSON();
+  let newOrder = new Order(json);
+```
+
+We use this function internally, and it can be useful in cases where you'd like to do something like store orders in your own database. You could easily drop the JSON version of the orders directly into something like Redis, and then you could convert it back into an order object whenever you need to use it.
