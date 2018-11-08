@@ -77,7 +77,7 @@ It works essentially the same way as `make()`, except it requires an address as 
 
 ### Address Recovery
 
-### recoverMaker()
+#### recoverMaker()
 
 If an order is signed using the `make()` method, the original maker address can be recovered by calling
 
@@ -87,7 +87,7 @@ If an order is signed using the `make()` method, the original maker address can 
 
 This is useful when an order is reconstituted and you want to verify that the maker listed in the order is actually who signed the order.
 
-### recoverPoster()
+#### `recoverPoster()`
 
 Description for `recoverMaker()` also applies here:
 
