@@ -47,7 +47,7 @@ Order objects which are created, signed and posted to the OrderStream network wi
 
 ### Signing Orders
 
-#### make()
+#### `make()`
 
 Once an order has been generated, it can be cryptographically signed by calling `order.make()`. The result of this function will be to push `v`, `r`, and `s` values (which represent the signature) to the end of the `makerValues` array.
 
@@ -63,7 +63,7 @@ Having the order signed by the maker is strictly optional. Some subContracts do 
 
 Calling `order.make()` will prompt the user to sign with a tool like MetaMask if they are using a web browser.
 
-#### prepareForPost()
+#### `prepareForPost()`
 
 The Paradigm OrderStream network requires that anyone posting to the network sign the order. This is in addition to the maker signature, and it is not optional if you want to use the OrderStream network.
 
@@ -77,7 +77,7 @@ It works essentially the same way as `make()`, except it requires an address as 
 
 ### Address Recovery
 
-#### recoverMaker()
+#### `recoverMaker()`
 
 If an order is signed using the `make()` method, the original maker address can be recovered by calling
 
