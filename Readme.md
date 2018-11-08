@@ -86,6 +86,8 @@ Finally, once an order is made, posted, and discovered by another party, it can 
   order.take(taker, takerValues);
 ```
 
+For a more detailed explanation, check out the [Order docs](https://github.com/ParadigmFoundation/ParadigmConnect/blob/master/lib/docs/Order.md).
+
 ## OrderStream
 
 The `OrderStream` class provides convenient methods for interacting with the Paradigm OrderStream (OS) Network.
