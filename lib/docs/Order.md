@@ -49,7 +49,7 @@ Order objects which are created, signed and posted to the OrderStream network wi
 
 #### make()
 
-Once an order has been generated, it can be cryptographically signed by calling `order.make()`. The result of this function will be to push `v`, `r`, and `s` values (which represent the signature) to the end of the makerValues array.
+Once an order has been generated, it can be cryptographically signed by calling `order.make()`. The result of this function will be to push `v`, `r`, and `s` values (which represent the signature) to the end of the `makerValues` array.
 
 When the order is taken, this allows subContracts to verify that the order was indeed created by the maker in the order.
 
@@ -74,3 +74,25 @@ It works essentially the same way as `make()`, except it requires an address as 
   console.log(order.posterSignature);
   // => Should render signature data structure
 ```
+
+### Address Recovery
+
+### recoverMaker()
+
+If an order is signed using the `make()` method, the original maker address can be recovered by calling
+
+```javascript
+  order.recoverMaker()
+```
+
+This is useful when an order is reconstituted and you want to verify that the maker listed in the order is actually who signed the order.
+
+### recoverPoster()
+
+Description for `recoverMaker()` also applies here:
+
+```javascript
+  order.recoverPoster();
+```
+
+The Paradigm OrderStream makes use of this method to verify that the poster is a valid address according the the Paradigm governance rules (forthcoming).
