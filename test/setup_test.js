@@ -1,5 +1,6 @@
 const Web3 = require('web3');
 const chai = require('chai');
+const CAP = require('chai-as-promised');
 const ganacheProvider = require('ganache-core').provider();
 const Paradigm = require('../index');
 
@@ -7,6 +8,8 @@ const tokenHelper = require('./helpers/tokenHelper.js');
 const paradigmContractHelper = require('./helpers/paradigmContractHelper');
 
 global.SimpleERC20 = require('simple-erc20');
+
+chai.use(CAP);
 
 before(async () => {
   global.assert = chai.assert;
