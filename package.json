@@ -1,6 +1,6 @@
 {
   "name": "paradigm-connect",
-  "version": "0.0.3",
+  "version": "0.0.8",
   "description": "JavaScript module for connecting with Paradigm.",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,8 @@
     "paradigm-protocol-contracts": "0.0.4",
     "simple-erc20": "^1.0.6",
     "web3": "^1.0.0-beta.36",
-    "ws": "^6.0.0"
+    "ws": "^6.0.0",
+    "isomorphic-ws": "^4.0.1"
   },
   "devDependencies": {
     "chai": "^4.1.2",
