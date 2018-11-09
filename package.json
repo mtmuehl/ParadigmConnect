@@ -13,7 +13,7 @@
     "ethereumjs-abi": "^0.6.5",
     "ethereumjs-util": "^5.2.0",
     "node-fetch": "^2.2.0",
-    "paradigm-core-solidity": "0.0.2",
+    "paradigm-protocol-contracts": "0.0.4",
     "simple-erc20": "^1.0.6",
     "web3": "^1.0.0-beta.36",
     "ws": "^6.0.0"
