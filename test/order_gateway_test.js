@@ -5,13 +5,53 @@ const OrderGatewayContract = require('paradigm-protocol-contracts/build/contract
 describe('OrderGateway', () => {
   let orderGateway;
 
-  before(() => {
+  before(async () => {
+    bank = paradigm.bank;
+    Signature = paradigm.Signature;
+    Order = paradigm.Order;
     orderGateway = paradigm.orderGateway;
+
+    maker = accounts[7].toLowerCase();
+    taker = accounts[8].toLowerCase();
+    let makerArguments = await orderGateway.makerArguments(subContract);
+    let takerArguments = await orderGateway.takerArguments(subContract);
+
+    await bank.giveMaxAllowanceFor(TKA, subContract, maker);
+    await bank.giveMaxAllowanceFor(TKB, subContract, taker);
+
+    let makerValues = {
+      signer: maker,
+      signerToken: TKA,
+      signerTokenCount: 1000,
+      buyer: taker,
+      buyerToken: TKB,
+      buyerTokenCount: 1000,
+    };
+
+    order = new paradigm.Order({ subContract, maker: maker, makerArguments, takerArguments, makerValues });
+    await order.make();
   });
 
   describe('participate()', () => {
     it('should participate in a fully constructed Order.');
   });
+
+  describe('events', () => {
+    it('should call callback', (done) => {
+      const takerValues = {
+        tokensToBuy: 100
+      };
+
+      orderGateway.oneEvent((error, event) => {
+        event.returnValues.id.should.eq('test');
+        done()
+      });
+
+      order.id = 'test';
+      order.take(taker, takerValues);
+    });
+  });
+
 
   describe('makerArguments()', () => {
     it('should get the makerArguments of a SubContract', async () => {
