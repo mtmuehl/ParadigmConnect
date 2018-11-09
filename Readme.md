@@ -123,3 +123,5 @@ Here is an [example](https://github.com/ParadigmFoundation/connect-demo) of both
     $('#orders').append(`<div class='card'><div class='card-body'>${message.data}</div></div>`);
   });
 ```
+
+For a more detailed explanation, check out the [OrderStream docs](https://github.com/ParadigmFoundation/ParadigmConnect/blob/master/lib/docs/OrderStream.md).

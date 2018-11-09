@@ -35,6 +35,16 @@ Once you have [prepared an order to be posted](https://github.com/ParadigmFounda
   orderStream.add(order);
 ```
 
+A simple, full example of making an order, preparing it to be posted, and adding to the OrderStream looks like:
+
+```javascript
+  order.make().then(() => {
+    order.prepareForPost(currentUser).then(() => {
+      orderStream.add(order);
+    })
+  });
+```
+
 If the request is successful, you will get back JSON which contains the OrderStream ID as well as the raw data for the order.
 
 ### Listening to the Order Stream
