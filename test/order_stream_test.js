@@ -27,13 +27,11 @@ describe('OrderStream', () => {
 
     order = new paradigm.Order({ subContract, maker: maker, makerArguments, takerArguments, makerValues });
     await order.make();
-
-    console.log("OS: ", order)
   });
 
   it('should post to the OS', async () => {
     await order.prepareForPost(maker);
-    orderStream.add(order);
+    orderStream.add(order).should.eventually.be.fulfilled;
   });
 
 });
