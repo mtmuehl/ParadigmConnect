@@ -76,18 +76,24 @@ describe('Order', () => {
 
   describe('take()', () => {
     it("posts the order to the OrderGateway", async () => {
+      const tka = SimpleERC20(TKA, await web3.eth.net.getId(), web3);
+      const tkb = SimpleERC20(TKB, await web3.eth.net.getId(), web3);
+      const initialTKABalance = await tka.balanceOf(taker);
+      const initialTKBBalance = await tkb.balanceOf(maker);
       const takerValues = {
         tokensToBuy: 100
       };
 
-      (await order.estimateGasCost(taker, takerValues)).should.be.lt(141700);
+      (await order.estimateGasCost(taker, takerValues)).should.be.lt(145000);
 
       await order.take(taker, takerValues);
 
-      const tka = SimpleERC20(TKA, await web3.eth.net.getId(), web3);
-      assert.equal(await tka.balanceOf(taker), '100', 'TKA');
-      const tkb = SimpleERC20(TKB, await web3.eth.net.getId(), web3);
-      assert.equal(await tkb.balanceOf(maker), '100', 'TKB');
+
+      const resultTKABalance = web3.utils.toBN(await tka.balanceOf(taker)).sub(web3.utils.toBN(initialTKABalance));
+      const resultTKBBalance = web3.utils.toBN(await tkb.balanceOf(maker)).sub(web3.utils.toBN(initialTKBBalance));
+
+      assert.equal(resultTKABalance, '100', 'TKA');
+      assert.equal(resultTKBBalance, '100', 'TKB');
     });
   });
 
