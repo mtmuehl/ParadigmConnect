@@ -1,6 +1,6 @@
 {
   "name": "paradigm-connect",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "JavaScript module for connecting with Paradigm.",
   "main": "index.js",
   "scripts": {
