@@ -86,6 +86,13 @@ Finally, once an order is made, posted, and discovered by another party, it can 
   order.take(taker, takerValues);
 ```
 
+When an order has been generated via the OrderStream or other sources and order status is unknown `isValid` and `amountRemaining` can be used to get status information from the subContract.
+```javascript
+  if(order.isValid() &&  order.amountRemaining() > 0) {
+    order.take(taker, takerValues);
+  }
+```
+
 For a more detailed explanation, check out the [Order docs](https://github.com/ParadigmFoundation/ParadigmConnect/blob/master/lib/docs/Order.md).
 
 ## OrderStream
