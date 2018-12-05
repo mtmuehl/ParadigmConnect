@@ -49,6 +49,8 @@ If the request is successful, you will get back JSON which contains the OrderStr
 
 ### Listening to the Order Stream
 
+#### `listen()`
+
 You can listen to the OrderStream by calling `listen` and then providing a callback function. For example:
 
 ```javascript
