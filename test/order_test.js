@@ -51,6 +51,9 @@ describe('Order', () => {
     it("receives a SubContract address", () => {
       assert.equal(order.subContract, subContract);
     });
+    it('should throw for bad subContract address', async () => {
+      (() => new paradigm.Order({ subContract: '0x0', makerValues: { a: 'a' }})).should.throw();
+    });
   });
 
   describe('make()', () => {
