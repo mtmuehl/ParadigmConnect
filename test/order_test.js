@@ -51,6 +51,7 @@ describe('Order', () => {
     it("receives a SubContract address", () => {
       assert.equal(order.subContract, subContract);
     });
+
     it('should throw for bad subContract address', async () => {
       (() => new paradigm.Order({ subContract: '0x0', makerValues: { a: 'a' }})).should.throw();
     });
@@ -112,20 +113,35 @@ describe('Order', () => {
     });
   });
 
+  describe('prepareForPost()', () => {
+    it('should sign the order adding a posterSignature', async () => {
+      if (order.posterSignature !== undefined) delete order.posterSignature;
+      await order.prepareForPost(accounts[6]);
+
+      order.recoverPoster().should.eq(accounts[6].toLowerCase());
+    });
+  });
+
   describe('recoverPoster()', () => {
     it('returns the maker address if not signed by poster', async () => {
       await order.prepareForPost();
 
       order.recoverPoster().should.eq(maker);
-      order.poster.should.eq(maker);
     });
 
     it('returns the poster address', async () => {
       await order.prepareForPost(accounts[5]);
 
       order.recoverPoster().should.eq(accounts[5].toLowerCase());
-      order.poster.should.eq(accounts[5]);
+    });
 
+    it('should change returned address for modified order', async () => {
+      const testOrder = new Order(order.toJSON());
+      await testOrder.prepareForPost(accounts[5]);
+
+      testOrder.makerValues.buyerToken = accounts[4];
+
+      testOrder.recoverPoster().should.not.eq(accounts[5]);
     });
   });
 
