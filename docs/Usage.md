@@ -124,9 +124,10 @@ const signedZeroExOrder = {
   signature: await signatureUtils.ecSignHashAsync(web3.currentProvider, orderHashUtils.getOrderHashHex(zeroExOrder), makerAddress, 'DEFAULT')
 };
 
-
-const makerValues = zeroExFormatter(signedZeroExOrder);
-const order = new paradigm.Order({ subContract, makerValues, maker: makerAddress });
+const order = new paradigm.Order({
+  subContract: subContract,
+  makerValues: zeroExFormatter(signedZeroExOrder),
+  maker: makerAddress });
 ```
 
 ## Posting to the OrderStream
