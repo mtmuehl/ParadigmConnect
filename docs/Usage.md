@@ -73,7 +73,7 @@ Also, it doesn't modify the same datastructure. Instead of updating `makerValues
 
 ## Using Formatters
 
-Paradigm can be used with existing 3rd party projects like 0x and Dharma. Many 3rd party projects have their own format for orders which differs from ours.
+Paradigm can be used with existing 3rd party projects like 0x and Dharma. Many 3rd party projects have their own formats for orders which differ from ours.
 
 Formatters can be used to restructure orders into the streamlined format used by the Paradigm Protocol. We provide a few for popular projects in the SubContractExamples project.
 
