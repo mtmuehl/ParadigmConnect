@@ -73,7 +73,7 @@ Also, it doesn't modify the same datastructure. Instead of updating `makerValues
 
 ## Using Formatters
 
-## Posting to the Order OrderStream
+## Posting to the OrderStream
 
 ### Initialization
 
