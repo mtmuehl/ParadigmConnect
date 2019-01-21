@@ -73,6 +73,62 @@ Also, it doesn't modify the same datastructure. Instead of updating `makerValues
 
 ## Using Formatters
 
+Paradigm can be used with existing 3rd party projects like 0x and Dharma. Many 3rd party projects have their own format for orders which differs from ours.
+
+Formatters can be used to restructure orders into the streamlined format used by the Paradigm Protocol. We provide a few for popular projects in the SubContractExamples project.
+
+An example formatter is our 0x order formatter. It takes a 0x order and restructures it into our standard format:
+
+```javascript
+module.exports = (signedZeroExOrder) => {
+
+  const makerAsset = signedZeroExOrder.makerAssetData.substr(2).match(/.{1,64}/g);
+  const takerAsset = signedZeroExOrder.takerAssetData.substr(2).match(/.{1,64}/g);
+  const signature = signedZeroExOrder.signature.substr(2).match(/.{1,64}/g);
+
+  signedZeroExOrder.makerAssetData0 = `0x${makerAsset[0]}`;
+  signedZeroExOrder.makerAssetData1 = `0x${makerAsset[1]}`;
+
+  signedZeroExOrder.takerAssetData0 = `0x${takerAsset[0]}`;
+  signedZeroExOrder.takerAssetData1 = `0x${takerAsset[1]}`;
+
+  signedZeroExOrder.signature0 = `0x${signature[0]}`;
+  signedZeroExOrder.signature1 = `0x${signature[1]}`;
+  signedZeroExOrder.signature2 = `0x${signature[2]}`;
+
+  return signedZeroExOrder;
+};
+```
+
+This lets us do the following:
+
+```javascript
+const zeroExOrder = {
+  makerAddress,
+  takerAddress: paradigm.utils.NULL_ADDRESS,
+  feeRecipientAddress: paradigm.utils.NULL_ADDRESS,
+  senderAddress: paradigm.utils.NULL_ADDRESS,
+  makerAssetAmount: new BigNumber(100),
+  takerAssetAmount: new BigNumber(100),
+  makerFee: new BigNumber(0),
+  takerFee: new BigNumber(0),
+  expirationTimeSeconds: new BigNumber(Date.now().toString()), //In ms so 1000 * now is plenty in the future
+  salt: ZeroExImports.generatePseudoRandomSalt(),
+  makerAssetData: assetDataUtils.encodeERC20AssetData(tokenA.address),
+  takerAssetData: assetDataUtils.encodeERC20AssetData(tokenB.address),
+  exchangeAddress: EXCHANGE_ADDRESS
+};
+
+const signedZeroExOrder = {
+  ...zeroExOrder,
+  signature: await signatureUtils.ecSignHashAsync(web3.currentProvider, orderHashUtils.getOrderHashHex(zeroExOrder), makerAddress, 'DEFAULT')
+};
+
+
+const makerValues = zeroExFormatter(signedZeroExOrder);
+const order = new paradigm.Order({ subContract, makerValues, maker: makerAddress });
+```
+
 ## Posting to the OrderStream
 
 ### Initialization
