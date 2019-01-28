@@ -1,12 +1,22 @@
 ---
-title: Usage
+title: Reference
 ---
 
-# ParadigmConnect Usage/Examples
+# ParadigmConnect API Reference
 
-Code samples and documentation for the various classes exposed by `paradigm-connect`. See [the reference section](./reference.md) for more granular documentation of the various class interfaces.
+## Paradigm
 
-## Creating and Signing Orders
+The `Paradigm` class is the top-level module used to interact with the classes and methods discussed below. 
+
+Instantiate a new `Paradigm` with the following:
+
+...
+
+## Order
+
+The Order class provides utilities for constructing a properly formatted order to be placed within the Paradigm OrderStream network and to be taken via the OrderGateway smart contract on the Ethereum network.
+
+Additionally, various methods are available to add cryptographic signatures to the order on behalf of different parties.
 
 ### Initialization
 
@@ -77,66 +87,68 @@ Also, it doesn't modify the same datastructure. Instead of updating `makerValues
   // => Should render signature data structure
 ```
 
-## Using Formatters
+### Address Recovery
 
-Paradigm can be used with existing 3rd party projects like 0x and Dharma. Many 3rd party projects have their own formats for orders which differ from ours.
+#### `recoverMaker()`
 
-Formatters can be used to restructure orders into the streamlined format used by the Paradigm Protocol. We provide a few for popular projects in the SubContractExamples project.
-
-An example formatter is our 0x order formatter. It takes a 0x order and restructures it into our standard format:
+If an order is signed using the `make()` method, the original maker address can be recovered by calling
 
 ```javascript
-module.exports = (signedZeroExOrder) => {
-
-  const makerAsset = signedZeroExOrder.makerAssetData.substr(2).match(/.{1,64}/g);
-  const takerAsset = signedZeroExOrder.takerAssetData.substr(2).match(/.{1,64}/g);
-  const signature = signedZeroExOrder.signature.substr(2).match(/.{1,64}/g);
-
-  signedZeroExOrder.makerAssetData0 = `0x${makerAsset[0]}`;
-  signedZeroExOrder.makerAssetData1 = `0x${makerAsset[1]}`;
-
-  signedZeroExOrder.takerAssetData0 = `0x${takerAsset[0]}`;
-  signedZeroExOrder.takerAssetData1 = `0x${takerAsset[1]}`;
-
-  signedZeroExOrder.signature0 = `0x${signature[0]}`;
-  signedZeroExOrder.signature1 = `0x${signature[1]}`;
-  signedZeroExOrder.signature2 = `0x${signature[2]}`;
-
-  return signedZeroExOrder;
-};
+  order.recoverMaker()
 ```
 
-This lets us do the following:
+This is useful when an order is reconstituted and you want to verify that the maker listed in the order is actually who signed the order.
+
+#### `recoverPoster()`
+
+Description for `recoverMaker()` also applies here:
 
 ```javascript
-const zeroExOrder = {
-  makerAddress,
-  takerAddress: paradigm.utils.NULL_ADDRESS,
-  feeRecipientAddress: paradigm.utils.NULL_ADDRESS,
-  senderAddress: paradigm.utils.NULL_ADDRESS,
-  makerAssetAmount: new BigNumber(100),
-  takerAssetAmount: new BigNumber(100),
-  makerFee: new BigNumber(0),
-  takerFee: new BigNumber(0),
-  expirationTimeSeconds: new BigNumber(Date.now().toString()), //In ms so 1000 * now is plenty in the future
-  salt: ZeroExImports.generatePseudoRandomSalt(),
-  makerAssetData: assetDataUtils.encodeERC20AssetData(tokenA.address),
-  takerAssetData: assetDataUtils.encodeERC20AssetData(tokenB.address),
-  exchangeAddress: EXCHANGE_ADDRESS
-};
-
-const signedZeroExOrder = {
-  ...zeroExOrder,
-  signature: await signatureUtils.ecSignHashAsync(web3.currentProvider, orderHashUtils.getOrderHashHex(zeroExOrder), makerAddress, 'DEFAULT')
-};
-
-const order = new paradigm.Order({
-  subContract: subContract,
-  makerValues: zeroExFormatter(signedZeroExOrder),
-  maker: makerAddress });
+  order.recoverPoster();
 ```
 
-## Posting to the OrderStream
+The Paradigm OrderStream makes use of this method to verify that the poster is a valid address according the the Paradigm governance rules (forthcoming).
+
+### Taking Orders
+
+Taking an order means submitting a transaction to the Ethereum blockchain that fulfills the order. In the case of something like 0x, this means that you are completing a trade. In the case of something like Dharma, this means you are funding a loan.
+
+#### `take()`
+
+The `take()` method requires two arguments: an address for the `taker` and an array of `takerValues`. The `takerValues` array will contain values required by the subContract. In a simple trade, this could just be the number of tokens the taker wishes to purchase.
+
+```javascript
+  order.take('0x0988F52Cec741bDfB42aD8D80651005C6D221525', [500]);
+```
+
+If in a web browser, this will prompt the taker to submit the transaction with a tool like MetaMask.
+
+#### `estimateGasCost()`
+
+This is a utility method that will estimate the gas cost of `take()`. It requires exactly the same arguments.
+
+```javascript
+  order.estimateGasCost('0x0988F52Cec741bDfB42aD8D80651005C6D221525', [500]);
+```
+
+### Utilities
+
+#### `toJSON()`
+
+This method will convert the order object into a plain JSON object. The JSON object will be structured so that it can be directly passed back into the `new Order()` function as the options hash to reconstitute the order.
+
+```javascript
+  let json = order.toJSON();
+  let newOrder = new Order(json);
+```
+
+We use this function internally, and it can be useful in cases where you'd like to do something like store orders in your own database. You could easily drop the JSON version of the orders directly into something like Redis, and then you could convert it back into an order object whenever you need to use it.
+
+## OrderStream
+
+The OrderStream class provides two simple utilities for interacting with the Paradigm OrderStream network.
+
+First of all, it provides a simple mechanism for adding new orders to the stream. It also provides a simple way to listen (via WebSockets) to new orders being added to the stream.
 
 ### Initialization
 
@@ -177,30 +189,28 @@ A simple, full example of making an order, preparing it to be posted, and adding
 
 If the request is successful, you will get back JSON which contains the OrderStream ID as well as the raw data for the order.
 
+### Listening to the Order Stream
 
+#### `listen()`
 
-## Reading from the OrderStream
-
-## Executing Trades
-
-### Taking Orders
-
-Taking an order means submitting a transaction to the Ethereum blockchain that fulfills the order. In the case of something like 0x, this means that you are completing a trade. In the case of something like Dharma, this means you are funding a loan.
-
-#### `take()`
-
-The `take()` method requires two arguments: an address for the `taker` and an array of `takerValues`. The `takerValues` array will contain values required by the subContract. In a simple trade, this could just be the number of tokens the taker wishes to purchase.
+You can listen to the OrderStream by calling `listen` and then providing a callback function. For example:
 
 ```javascript
-  order.take('0x0988F52Cec741bDfB42aD8D80651005C6D221525', [500]);
+  orderStream.listen((order) => {
+    console.log(order);
+  });
 ```
 
-If in a web browser, this will prompt the taker to submit the transaction with a tool like MetaMask.
+This provides you an easy way to subscribe to the OrderStream and handle the data any way you wish: adding it to a UI, database, or elsewhere.
 
-#### `estimateGasCost()`
+## OrderGateway
 
-This is a utility method that will estimate the gas cost of `take()`. It requires exactly the same arguments.
+The OrderGateway class provides an API for communicating directly with the OrderGateway smart contract on the Ethereum network.
 
-```javascript
-  order.estimateGasCost('0x0988F52Cec741bDfB42aD8D80651005C6D221525', [500]);
-```
+It is used internally by the [`Order` class](https://github.com/ParadigmFoundation/ParadigmConnect/blob/master/lib/docs/Order.md) to implement the `take()`, `isValid()` and `amountRemaining()` methods. It can also be used to find out what `maker` and `taker` arguments a particular subContract expects to receive in order to execute a transaction. 
+
+The OrderGateway exposes the `Participation` event which can be leveraged as a [web3 Event](https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#contract-event)
+
+## Signature
+
+Internal class used by `Order`,  reference coming soon. 
