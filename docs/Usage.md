@@ -177,11 +177,36 @@ A simple, full example of making an order, preparing it to be posted, and adding
 
 If the request is successful, you will get back JSON which contains the OrderStream ID as well as the raw data for the order.
 
-
-
 ## Reading from the OrderStream
 
+The `listen()` method will connect you to the OS via WebSocket to pick up incoming order events. Any middleware or filtering can be applied, based on the needs of your application. 
+
+```javascript
+  orderStream.listen((message) => { console.log(message) });
+```
+
+Here is an [example](https://github.com/ParadigmFoundation/connect-demo) of both in action for a front-end web application:
+
+```javascript
+  order.make().then(() => {
+    order.prepareForPost(currentUser).then(() => {
+      orderStream.add(order);
+    })
+  });
+
+  // ...
+
+  orderStream.listen((message) => {
+    console.log(message);
+    $('#orders').append(`<div class='card'><div class='card-body'>${message.data}</div></div>`);
+  });
+```
+
+Another example of a more complicated set of steps being applied (as "filters") to the `order-stream` API can be found, as a callback function, [here](https://github.com/ParadigmFoundation/OrderStream-SRA/blob/master/src/stream.ts) and it's caller [here](https://github.com/ParadigmFoundation/OrderStream-SRA/blob/master/src/server.ts#L140).
+
 ## Executing Trades
+
+Similarly to how ParadigmConnect allows makers to create orders and push them to the OrderStream, the library also allows execution of trades as takers. For example, you can receive a maker order over the stream API, do some processing inside an application, then use the `take()` method (described below) to settle the trade through the OrderGateway, and the specified settlement logic. 
 
 ### Taking Orders
 
