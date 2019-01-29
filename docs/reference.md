@@ -50,13 +50,15 @@ Additionally, various methods are available to add cryptographic signatures to t
 ### Initialization
 
 The Order constructor accepts an options hash (Javascript Object) as an argument which accepts the following parameters:
-- subContract
-- maker
-- makerArguments
-- takerArguments
-- makerValues
-- makerSignature
-- posterSignature
+|Name (key)|JS Type (value)|Remarks/Description|Required|
+|-|-|-|-|
+|`subContract`|`string`|Ethereum address of the SubContract an order is for|`true`|
+|`maker`|`string`|Ethereum address of the maker for an order|`true`|
+|`makerArguments`|`array`|SubContract specific arguments for makers (relates to makerValues)|`false`|
+|`takerArguments`|`array`|SubContract specific arguments for takers|`false`|
+|`makerValues`|`object`|SubContract and order specific values for maker order|`true`|
+|`makerSignature`|`object`|Signature object from maker|`false`|
+|`posterSignature`|`object`|Signature object from poster entity|`false`|
 
 `makerArguments` and `takerArguments` can either be provided directly, or alternatively, they can automatically be pulled from the subContract if the subContract provides them.
 
