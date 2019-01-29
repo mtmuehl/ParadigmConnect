@@ -4,6 +4,10 @@ title: Getting Started
 
 # Getting Started
 
+Quick start and simple examples. Be sure to check out more detailed [usage examples](./usage.md) and the full [API reference here.](./reference.md)
+
+## Install
+
 ParadigmConnect is currently only available as a Node.js module. Install with `npm`:
 
 ```
@@ -23,7 +27,11 @@ web3.eth.net.getId().then((networkId) => {
 }
 ```
 
-## Paradigm
+## Quick Start
+
+Quick start reference, full API reference can be [found here](./reference.md), and additional usage examples can be [found here.](./usage.md)
+
+### Paradigm
 
 The `Paradigm` class is the top level object through which you will interact with the library. It takes a variety of initialization parameters that you will need to provide.
 
@@ -31,7 +39,7 @@ The `Paradigm` class is the top level object through which you will interact wit
   const paradigm = new Paradigm({ provider: web3.currentProvider, networkId: networkId });
 ```
 
-## Order
+### Order
 
 The `Order` class is what you will use to construct and sign orders which you'd like to post to the Paradigm OrderStream to be broadcast to the network.
 
@@ -95,7 +103,7 @@ When an order has been generated via the OrderStream or other sources and order 
 
 For a more detailed explanation, check out the [Order docs](./reference.md#order).
 
-## OrderStream
+### OrderStream
 
 The `OrderStream` class provides convenient methods for interacting with the Paradigm OrderStream (OS) Network.
 
