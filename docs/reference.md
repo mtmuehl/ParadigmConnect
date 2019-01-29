@@ -6,42 +6,85 @@ title: Reference
 
 API reference for `paradigm-connect` and its various classes and utilities. Also see [usage and examples](./usage.md).
 
+- [Paradigm](#Paradigm)
+  - [Constructor](#paradigm-constructor)
+- [Order](#Order)
+  - [Constructor](#order-constructor)
+  - [make()](#method-order.prototype.make`)
+  - [isValid()](#method-order.prototype.isValid`)
+  - [amountRemaining()](#method-order.prototype.amountRemaining`)
+  - [take()](#method-order.prototype.take`)
+  - [prepareForPost()](#method-order.prototype.prepareForPost`)
+  - [estimateGasCost()](#method-order.prototype.estimateGasCost`)
+  - [recoverMaker()](#method-order.prototype.recoverMaker`)
+  - [recoverPoster()](#method-order.prototype.recoverPoster`)
+- [OrderGateway](#OrderGateway)
+  - [Constructor](#ordergateway-constructor)
+  - [init()](#method-ordergateway.prototype.init`)
+  - [participate()](#method-ordergateway.prototype.participate`)
+  - [participateEstimateGas()](#method-ordergateway.prototype.participateEstimateGas`)
+  - [makerArguments()](#method-ordergateway.prototype.makerArguments`)
+  - [takerArguments()](#method-ordergateway.prototype.takerArguments`)
+  - [isValid()](#method-ordergateway.prototype.isValid`)
+  - [amountRemaining()](#method-ordergateway.prototype.amountRemaining`)
+  - [oneEvent()](#method-ordergateway.prototype.oneEvent`)
+- [OrderStream](#OrderStream)
+  - [Constructor](#orderstream-constructor)
+  - [add()](#method-orderstream.prototype.add`)
+  - [listen()](#method-orderstream.prototype.listen`)
+
+
 ## Paradigm
 
-The `Paradigm` class is the top-level module used to interact with the classes and methods discussed below. You can instantiate a `Paradigm` class as follows:
+The `Paradigm` class is the top-level module and default export of `paradigm-connect`. It used to interact with the classes and methods discussed below. You can instantiate a `Paradigm` class as follows.
 
-```js
-const Paradigm = require("paradigm-connect");
-const paradigm = new Paradigm(options);
-```
+### `Paradigm` constructor
 
-Where `options` is an object with the following:
+- **Description:** 
 
-|Key|Value (JS type)|Remarks/Description|
-|-|-|-|
-|`networkId`|`number`| Any valid Ethereum network ID (1, 3, 42, etc.)|
-|`provider`|`string`|Any valid web3 provider URL, or provider object|
-|`endpoint`|`string`|OrderStream node URL (subject to change)|
-|`orderGatewayAddress`|`string`|Optional address for the OrderGateway|
+  Create a new `Paradigm` instance. Also instantiates all sub-classes (`Order`, `OrderGateway`, and `OrderStream`).
 
-An example configuration option (relatively minimal):
+- **Returns:** 
 
-```js
-const Paradigm = require("paradigm-connect");
+  - `Paradigm.prototype` - new `Paradigm` instance.
 
-// create options object with desired config
-const options = {
-  networkId: 3,
-  provider: "wss://ropsten.infura.io/ws",
-  endpoint: "bs2.paradigm.market",
-};
+- **Arguments:**
 
-// create new instance
-const paradigm = new Paradigm(options);
+  1. `options` (object - see below)
+  
+  All options are optional, if none are provided a default config (to Ropsten test-network) will be used.
 
-// destructure various classes
-const { Order, OrderGateway, OrderStream } = paradigm;
-```
+  |Key|Value|Remarks/Description|Required|
+  |-|-|-|-|
+  |`networkId`|`number`| Any valid Ethereum network ID (1, 3, 42, etc.)|`false`|
+  |`provider`|`string`|Any valid web3 provider URL, or provider object|`false`|
+  |`endpoint`|`string`|OrderStream node URL (subject to change)|`false`|
+  |`orderGatewayAddress`|`string`|Optional address for the OrderGateway|`false`|
+
+
+- **Syntax:**
+
+  ```js
+  // require NPM module 
+  const Paradigm = require("paradigm-connect");
+
+  // set options
+  const options = {
+    provider: "wss://ropsten.infura.io/ws", 
+    endpoint: "bs2.paradigm.market",
+  };
+
+  // create new paradigm
+  const paradigm = new Paradigm(options);
+
+  // optionally, destructure sub-classes
+  const { Order, OrderStream, OrderGateway } = paradigm;
+  ```
+
+- **Notes:**
+
+  1. The `Paradigm` class instantiates all other sub-classes.
+  2. You should not need to, for example, instantiate `Order` by itself.
 
 ## Order
 
@@ -49,192 +92,269 @@ The Order class provides utilities for constructing a properly formatted order t
 
 Additionally, various methods are available to add cryptographic signatures to the order on behalf of different parties.
 
-### Initialization
+### `Order` constructor
 
-The Order constructor accepts an options hash (Javascript Object) as an argument which accepts the following parameters:
-|Key|Value|Remarks/Description|Required|
-|-|-|-|-|
-|`subContract`|`string`|Ethereum address of the SubContract an order is for|`true`|
-|`maker`|`string`|Ethereum address of the maker for an order|`true`|
-|`makerArguments`|`array`|SubContract specific arguments for makers (relates to makerValues)|`false`|
-|`takerArguments`|`array`|SubContract specific arguments for takers|`false`|
-|`makerValues`|`object`|SubContract and order specific values for maker order|`true`|
-|`makerSignature`|`object`|Signature object from maker|`false`|
-|`posterSignature`|`object`|Signature object from poster entity|`false`|
+- **Description:** 
 
-`makerArguments` and `takerArguments` can either be provided directly, or alternatively, they can automatically be pulled from the subContract if the subContract provides them.
+  Create a new `Order` instance.
 
-`takerArguments` are optional and can be provided in the event that the entire order is done off chain and added on-chain only as a way to complete the transaction.
+- **Returns:** 
 
-A typical order looks like this:
+  `Order.prototype` - new `Order.prototype` instance.
 
-```javascript
-  // NOTE: This is an example order. Actual structure of
-  // values will vary between different subContracts!
+- **Arguments:**
 
-  const Order = paradigm.Order;
-  let order = new Order({
-    subContract: '0xE0183d68d292d617c1f10900C28dC9F280608d9A',
-    maker: '0xD78d21C3E3CFB348C5ec5DF3Ad0De81d3d43b2C7',
-    makerValues: [
-      '0xD78d21C3E3CFB348C5ec5DF3Ad0De81d3d43b2C7', // Maker address
-      7000,                                         // Quantity to buy
-      25,                                           // Quantity to sell
-      '0xe41d2489571d322189246dafa5ebde1f4699f498', // Address of token to buy
-      '0x2956356cd2a2bf3202f771f50d3d14a367b48070'  // Address of token to sell
-    ]
-  });
-```
+  1. `options` (object - see below)
 
-Order objects which are created, signed and posted to the OrderStream network will have more data, but that data can also be directly passed into a new Order via the options hash to construct it.
+  |Key|Value|Remarks/Description|Required|
+  |-|-|-|-|
+  |`subContract`|`string`|Ethereum address of the SubContract an order is for|`true`|
+  |`maker`|`string`|Ethereum address of the maker for an order|`true`|
+  |`makerArguments`|`array`|SubContract specific arguments for makers (relates to makerValues)|`false`|
+  |`takerArguments`|`array`|SubContract specific arguments for takers|`false`|
+  |`makerValues`|`object`|SubContract and order specific values for maker order|`true`|
+  |`makerSignature`|`object`|Signature object from maker|`false`|
+  |`posterSignature`|`object`|Signature object from poster entity|`false`|
 
-### Signing Orders
 
-#### `make()`
+- **Syntax:**
 
-Once an order has been generated, it can be cryptographically signed by calling `order.make()`. The result of this function will be to push `v`, `r`, and `s` values (which represent the signature) to the end of the `makerValues` array.
+  ```js
+  let options = { maker, subContract, makerValues };
+  let order = new Order(options);
+  ```
 
-When the order is taken, this allows subContracts to verify that the order was indeed created by the maker in the order.
+- **Notes:**
 
-Having the order signed by the maker is strictly optional. Some subContracts do not require a signature. For example, 0x orders are already signed before they come into contact with Paradigm. Therefore, the same signature from the 0x order can be used and does not need to be duplicated.
+  1. The `makerArguments` and `takerArguments` fields can either be provided directly, or alternatively, they can automatically be pulled from the subContract if the subContract provides them.
+  2. The output of `Order.prototype.toJSON` can be passed back into the `Order` constructor.
 
-```javascript
-  order.make();
-  console.log(order.makerValues);
-  // => [..., 28, '0x23...', '0x56...']
-```
+### Method `Order.prototype.make()`
 
-Calling `order.make()` will prompt the user to sign with a tool like MetaMask if they are using a web browser.
+- **Description:** 
 
-#### `prepareForPost()`
+  Requests (and executes) a signature of a `Order` by the `maker` field, appended as `Order.prototype.makerSignature`.
 
-The Paradigm OrderStream network requires that anyone posting to the network sign the order. This is in addition to the maker signature, and it is not optional if you want to use the OrderStream network.
+- **Returns:** 
 
-It works essentially the same way as `make()`, except it accepts an address as an argument. If no address is provided, it will default to the `maker` address.
+  `Promise<void>` - promise resolves to void. 
 
-Also, it doesn't modify the same datastructure. Instead of updating `makerValues`, it directly sets an attribute called `posterSignature`.
+- **Arguments:** none.
 
-```javascript
-  order.prepareForPost('0xF00123Fb59d85e63be29148C4aD582FCEC886B3E');
-  console.log(order.posterSignature);
-  // => Should render signature data structure
-```
+- **Syntax:**
 
-### Address Recovery
+  ```js
+  let order = new Order(options);
+  await order.make();
+  ```
 
-#### `recoverMaker()`
+- **Notes:**
+  
+  1. Will attempt to use the `Order.web3` provider to generate signature.
+  2. Works with MetaMask, as well as local JSON-RPC.
 
-If an order is signed using the `make()` method, the original maker address can be recovered by calling
+### Method `Order.prototype.isValid()`
 
-```javascript
-  order.recoverMaker()
-```
+- **Description:** 
 
-This is useful when an order is reconstituted and you want to verify that the maker listed in the order is actually who signed the order.
+  Checks order validity according to `SubContract.isValid()` implementation of the specified `Order.prototype.subContract`.
 
-#### `recoverPoster()`
+- **Returns:**
 
-Description for `recoverMaker()` also applies here:
+  `Promise<boolean>` - promise resolves to order validity.
 
-```javascript
-  order.recoverPoster();
-```
+- **Arguments:** none.
 
-The Paradigm OrderStream makes use of this method to verify that the poster is a valid address according the the Paradigm governance rules (forthcoming).
+- **Syntax:**
 
-### Taking Orders
+  ```js
+  let order = new Order(options);
+  const valid = await order.isValid(); // => boolean
+  ```
 
-Taking an order means submitting a transaction to the Ethereum blockchain that fulfills the order. In the case of something like 0x, this means that you are completing a trade. In the case of something like Dharma, this means you are funding a loan.
+- **Notes:**
 
-#### `take()`
+  1. Requires `isValid()` to be implemented on the specified `subContract`.
 
-The `take()` method requires two arguments: an address for the `taker` and an array of `takerValues`. The `takerValues` array will contain values required by the subContract. In a simple trade, this could just be the number of tokens the taker wishes to purchase.
+### Method `Order.prototype.amountRemaining()`
 
-```javascript
-  order.take('0x0988F52Cec741bDfB42aD8D80651005C6D221525', [500]);
-```
+- **Description:** 
 
-If in a web browser, this will prompt the taker to submit the transaction with a tool like MetaMask.
+  Checks for amount remaining of order according to `SubContract.amountRemaining()` implementation of the specified `Order.prototype.subContract`.
 
-#### `estimateGasCost()`
+- **Returns:**
 
-This is a utility method that will estimate the gas cost of `take()`. It requires exactly the same arguments.
+  `Promise<number>` - promise resolves to amount remaining.
 
-```javascript
-  order.estimateGasCost('0x0988F52Cec741bDfB42aD8D80651005C6D221525', [500]);
-```
+- **Arguments:** none.
 
-### Utilities
+- **Syntax:**
 
-#### `toJSON()`
+  ```js
+  let order = new Order(options);
+  const remaining = await order.amountRemaining(); // => number
+  ```
 
-This method will convert the order object into a plain JSON object. The JSON object will be structured so that it can be directly passed back into the `new Order()` function as the options hash to reconstitute the order.
+- **Notes:**
 
-```javascript
-  let json = order.toJSON();
-  let newOrder = new Order(json);
-```
+  1. Requires `amountRemaining()` to be implemented on the specified `subContract`.
 
-We use this function internally, and it can be useful in cases where you'd like to do something like store orders in your own database. You could easily drop the JSON version of the orders directly into something like Redis, and then you could convert it back into an order object whenever you need to use it.
+### Method `Order.prototype.take()`
 
-## OrderStream
+- **Description:** 
 
-The OrderStream class provides two simple utilities for interacting with the Paradigm OrderStream network.
+  Fill a maker order as a taker. Executes settlement logic of specified `Order.prototype.subContract`. 
 
-First of all, it provides a simple mechanism for adding new orders to the stream. It also provides a simple way to listen (via WebSockets) to new orders being added to the stream.
+- **Returns:**
 
-### Initialization
+  `Promise<boolean>` - promise resolves to boolean status.
 
-The OrderStream constructor accepts one argument: a Paradigm OrderStream `endpoint`.
+- **Arguments:**
 
-```javascript
-  let orderStream = new OrderStream('os1.paradigm.market');
-```
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`taker`|`string`|Address of taker attempting to fill maker order.|
+  |2|`takerValues`|`object`|Object containing taker parameters, depends on SubContract impl.|
 
-The `ParadigmConnect` library actually instantiates a connection to the OrderStream on load. The standard way to set an OrderStream endpoint would be to pass it into the Paradigm constructor.
+- **Syntax:**
 
-```javascript
-  let paradigm = new Paradigm({ ..., orderStreamURL: 'os2.paradigm.market' });
-  let orderStream = paradigm.orderStream;
-```
+  ```js
+  let order = new Order(options);
+  await order.take(); // => 'true' if successful
+  ```
 
-This attaches an `orderStream` attribute to the `paradigm` object.
+- **Notes:**
 
-### Adding Orders to the Order Stream
+  1. Depends on `participate()` implementation of the specified `subContract`.
+  2. May request signature from `taker` to execute settlement logic.
 
-#### `add()`
+### Method `Order.prototype.prepareForPost()`
 
-Once you have [prepared an order to be posted](https://github.com/ParadigmFoundation/ParadigmConnect/blob/master/lib/docs/Order.md#prepareforpost), you can add it to the Order Stream by calling:
+- **Description:** 
 
-```javascript
-  orderStream.add(order);
-```
+  Sign a maker order as a `poster` to prepare the order for submission to the OrderStream.
 
-A simple, full example of making an order, preparing it to be posted, and adding to the OrderStream looks like:
+- **Returns:**
 
-```javascript
-  order.make().then(() => {
-    order.prepareForPost(currentUser).then(() => {
-      orderStream.add(order);
-    })
-  });
-```
+  `Promise<void>` - promise resolved to void.
 
-If the request is successful, you will get back JSON which contains the OrderStream ID as well as the raw data for the order.
+- **Arguments:**
 
-### Listening to the Order Stream
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`poster`|`string`|Address of poster entity signing maker order.|
 
-#### `listen()`
+- **Syntax:**
 
-You can listen to the OrderStream by calling `listen` and then providing a callback function. For example:
+  ```js
+  let order = new Order(options);
 
-```javascript
-  orderStream.listen((order) => {
-    console.log(order);
-  });
-```
+  // can be signed by maker or other address
+  await order.prepareForPost(order.maker);
+  ```
 
-This provides you an easy way to subscribe to the OrderStream and handle the data any way you wish: adding it to a UI, database, or elsewhere.
+- **Notes:**
+
+  1. If no `poster` is provided, a signature is requested from `Order.prototype.maker`.
+  2. The `Order.prototype.posterSignature` is used to verify the poster has allocated throughput on the OrderStream.
+
+### Method `Order.prototype.estimateGasCost()`
+
+- **Description:** 
+
+  Uses Ethereum utilities to estimate gas cost associated filling order (as if calling `Order.prototype.take()`).
+
+- **Returns:**
+
+  `Promise<number>` - promise resolves to estimated gas cost.
+
+- **Arguments:**
+
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`taker`|`string`|Address of taker attempting to fill maker order.|
+  |2|`takerValues`|`object`|Object containing taker parameters, depends on SubContract impl.|
+
+- **Syntax:**
+
+  ```js
+  let order = new Order(options);
+  const cost = await order.estimateGasCost(taker, takerValues); // => number
+  ```
+
+- **Notes:**
+
+  1. Same call signature as `Order.prototype.take()`
+
+### Method `Order.prototype.recoverMaker()`
+
+- **Description:** 
+
+  Recovers the `maker` address of a signed `Order.prototype`. Requires order to have been signed, or will throw.
+
+- **Returns:**
+
+  `string` - recovered address from `Order.prototype.makerSignature`.
+
+- **Arguments:** none.
+
+- **Syntax:**
+
+  ```js
+  let order = new Order(options);
+  const maker = order.recoverMaker();
+  console.log(maker === order.maker) // => 'true' for valid orders
+  ```
+
+### Method `Order.prototype.recoverPoster()`
+
+- **Description:** 
+
+  Recovers the `poster` address of a signed `Order.prototype`. Requires order to have been signed by a poster, or will throw.
+
+- **Returns:**
+
+  `string` - recovered address from `Order.prototype.posterSignature`.
+
+- **Arguments:** none.
+
+- **Syntax:**
+
+  ```js
+  let order = new Order(options);
+  poster = order.recoverPoster(); // => string
+  ```
+
+- **Notes:**
+
+  1. Used in ParadigmCore to check poster stake/allocation.
+
+### Method `Order.prototype.toJSON()`
+
+- **Description:** 
+
+  Allows serialization of `Order` instances into JSON.
+
+- **Returns:**
+
+  `object` - JSON `Order.prototype` representation with all values.
+
+- **Arguments:** none.
+
+- **Syntax:**
+
+  ```js
+  let order = new Order(options);
+  const orderJSON = order.toJSON();
+
+  // can be passed back into constructor
+  let newOrder = new Order(orderJSON); // => void
+  ```
+
+- **Notes:**
+
+  1. Helpful for transporting `Order.prototype` objects over networks, and enables reconstruction.
+  2. Output of `Order.prototype.toJSON()` can be passed to `Order` to recreate original `Order.prototype`.
 
 ## OrderGateway
 
@@ -242,8 +362,354 @@ The OrderGateway class provides an API for communicating directly with the Order
 
 It is used internally by the [`Order` class](https://github.com/ParadigmFoundation/ParadigmConnect/blob/master/lib/docs/Order.md) to implement the `take()`, `isValid()` and `amountRemaining()` methods. It can also be used to find out what `maker` and `taker` arguments a particular subContract expects to receive in order to execute a transaction. 
 
-The OrderGateway exposes the `Participation` event which can be leveraged as a [web3 Event](https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#contract-event)
+The OrderGateway exposes the `Participation` event which can be leveraged as a [web3 event](https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#contract-event) for tracking order status.
+
+### OrderGateway constructor
+
+- **Description:** 
+
+  Creates a new `OrderGateway` instance.
+
+- **Returns:** 
+
+  `OrderGateway.prototype` - new `OrderGateway` instance.
+
+- **Arguments:**
+
+  1. `options` - object, see below.
+
+  |Key|Value|Description|
+  |-|-|-|
+  |`web3`|`object`|Instantiated `web3` instance (any provider).|
+
+- **Syntax:**
+
+  ```js
+  const orderGateway = new OrderGateway({ web3 });
+  ```
+
+- **Notes:**
+  
+  1. You generally will not need to instantiate `OrderGateway` manually. Use `new Paradigm(...)` instead.
+
+### Method `OrderGateway.prototype.init()`
+
+- **Description:** 
+
+  Initialize `OrderGateway.prototype` and create contract instance via `web3`.
+
+- **Returns:** 
+
+  `Promise<void>` - resolves upon successful initialization.
+
+- **Arguments:**
+
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`options`|`object`|Same as object passed to constructor.|
+
+- **Syntax:**
+
+  ```js
+  // this function is called automatically by the constructor
+  ```
+
+- **Notes:**
+  
+  1. `OrderGateway.prototype.init()` is called during construction.
+  2. There is no need to call this method manually.
+
+### Method `OrderGateway.prototype.participate()`
+
+- **Description:** 
+
+  Participate in a trade. Wrapper for the specific SubContract implementation the order is for.
+
+- **Returns:** 
+
+  `Promise<boolean>` - resolves to participation status (`true` for successful execution).
+
+- **Arguments:**
+
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`subContract`|`string`|Address of target SubContract.|
+  |2|`id`|`string`|OrderID generated from OrderStream network (optional)|
+  |3|`makerData`|`Buffer`|Serialized `makerValues` in SubContract specific format.|
+  |4|`takerData`|`Buffer`|Serialized `takerValues` in SubContract specific format.|
+
+- **Syntax:**
+
+  ```js
+  await orderGateway.participate(subContract, id, makerValuesBytes, takerValuesBytes, taker);
+  ```
+
+- **Notes:**
+  
+  1. Generally will be called internally by `Order` class.
+
+### Method `OrderGateway.prototype.participateEstimateGas()`
+
+- **Description:** 
+
+  Estimate gas required to participate in a trade.
+
+- **Returns:** 
+
+  `Promise<number>` - resolves to estimated gas cost.
+
+- **Arguments:**
+
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`subContract`|`string`|Address of target SubContract.|
+  |2|`id`|`string`|OrderID generated from OrderStream network (optional)|
+  |3|`makerData`|`Buffer`|Serialized `makerValues` in SubContract specific format.|
+  |4|`takerData`|`Buffer`|Serialized `takerValues` in SubContract specific format.|
+
+- **Syntax:**
+
+  ```js
+  await orderGateway.participateEstimateGas(subContract, id, makerValuesBytes, takerValuesBytes, taker);
+  ```
+
+- **Notes:**
+  
+  1. Generally will be called internally by `Order` class.
+  1. Same call signature as `OrderGateway.prototype.participate()`.
+
+### Method `OrderGateway.prototype.makerArguments()`
+
+- **Description:** 
+
+  Check required `makerArguments` for a specific SubContract.
+
+- **Returns:** 
+
+  `Promise<array>` - resolves to `makerArguments` array.
+
+- **Arguments:**
+
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`subContract`|`string`|Address of target SubContract.|
+
+- **Syntax:**
+
+  ```js
+  const makerArguments = await orderGateway.makerArguments(subContract); // => array
+  ```
+
+- **Notes:**
+  
+  1. Wrapper for specific SubContract implementation of `makerArguments()`.
+
+### Method `OrderGateway.prototype.takerArguments()`
+
+- **Description:** 
+
+  Check required `takerArguments` for a specific SubContract.
+
+- **Returns:** 
+
+  `Promise<array>` - resolves to `takerArguments` array.
+
+- **Arguments:**
+
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`subContract`|`string`|Address of target SubContract.|
+
+- **Syntax:**
+
+  ```js
+  const takerArguments = await orderGateway.takerArguments(subContract); // => array
+  ```
+
+- **Notes:**
+  
+  1. Wrapper for specific SubContract implementation of `takerArguments()`.
+
+### Method `OrderGateway.prototype.isValid()`
+
+- **Description:** 
+
+  Check validity of a maker order for a specific SubContract.
+
+- **Returns:** 
+
+  `Promise<boolean>` - resolves to boolean order validity.
+
+- **Arguments:**
+
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`subContract`|`string`|Address of target SubContract.|
+  |2|`makerData`|`Buffer`|Serialized `makerValues` for SubContract.|
+
+- **Syntax:**
+
+  ```js
+  await orderGateway.isValid(subContract, makerData); // => array
+  ```
+
+- **Notes:**
+  
+  1. Wrapper for specific SubContract implementation of `isValid()`.
+
+### Method `OrderGateway.prototype.amountRemaining()`
+
+- **Description:** 
+
+  Check amount remaining of a maker order for a specific SubContract.
+
+- **Returns:** 
+
+  `Promise<number>` - resolves to number representing amount remaining.
+
+- **Arguments:**
+
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`subContract`|`string`|Address of target SubContract.|
+  |2|`makerData`|`Buffer`|Serialized `makerValues` for SubContract.|
+
+- **Syntax:**
+
+  ```js
+  const left = await orderGateway.amountRemaining(subContract, makerData);
+  ```
+
+- **Notes:**
+  
+  1. Wrapper for specific SubContract implementation of `amountRemaining()`.
+
+### Method `OrderGateway.prototype.oneEvent()`
+
+- **Description:** 
+
+  Allows a single (only called once) callback function to be attached to the `Participate` event.
+
+- **Returns:** `void`.
+
+- **Arguments:**
+
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`callback`|`function`|Callback function to be executed once.|
+  |2|`filter`|`object`|Optional event filter|
+
+- **Syntax:**
+
+  ```js
+  orderGateway.oneEvent(() => {
+    console.log("Received 'participate' event!");
+  });
+  ```
+
+- **Notes:**
+  
+  1. [See `web3.eth.Contract.prototype.once()` documentation.](https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#once)
+
+## OrderStream
+
+Simple class that provides basic wrappers for the OrderStream `post` and `stream` API's. Enables submission of signed maker orders, and subscription to output event stream of valid orders from the network.
+
+### OrderStream constructor
+
+- **Description:** 
+
+  Creates a new `OrderStream` instance.
+
+- **Returns:** 
+
+  `OrderStream.prototype` - new `OrderStream` instance.
+
+- **Arguments:**
+
+  1. `options` - object, see below.
+
+  |Key|Value|Description|
+  |-|-|-|
+  |`endpoint`|`string`|OrderStream node URL/URI (subject to change).|
+
+- **Syntax:**
+
+  ```js
+  const orderStream = new OrderStream({ endpoint: "bs1.paradigm.market" });
+  ```
+
+- **Notes:**
+  
+  1. You generally will not need to instantiate `OrderStream` manually. Use `new Paradigm(...)` instead.
+
+### Method `OrderStream.prototype.add()`
+
+- **Description:** 
+
+  Submit a signed maker order to the mempool of a specified OrderStream node via RPC.
+
+- **Returns:** 
+
+  `Promise<object>` - promise resolves to JSON response object from RPC.
+
+- **Arguments:**
+
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`order`|`object`|Signed `Order.prototype` object to submit.|
+
+- **Syntax:**
+
+  ```js
+  orderStream.add(order).then((res) =>  {
+    console.log(`Got response from server: ${res}`);
+  }).catch((err) => {
+    console.log(`Failed to submit with: ${err}`);
+  });
+  ```
+
+- **Notes:**
+  
+  1. For an `order` to be accepted by the network, it must be signed by a `poster` with valid stake.
+
+### Method `OrderStream.prototype.listen()`
+
+- **Description:** 
+
+  Attach a handler to be called on every valid order from the OrderStream.
+
+- **Returns:** `void`.
+
+- **Arguments:**
+
+  |No.|Name|Type|Description|
+  |-|-|-|-|
+  |1|`callback`|`function`|Callback to be executed on each `order`.|
+
+- **Syntax:**
+
+  ```js
+  orderStream.listen((order) => {
+    console.log(`Got a new order from OrderStream: ${JSON.stringify(order)}`);
+
+    // do any additional processing, take order, etc...
+  });
+  ```
+
+- **Notes:**
+  
+  1. The `callback` function should have signature: 
+     ```js
+     function callback(data) {
+       const parsed = JSON.parse(data); // suggested
+
+       // arbitrary logic...
+
+       return; // return 'null' (a.k.a void)
+     }
+     ```
 
 ## Signature
 
-Internal class used by `Order`,  reference coming soon. 
+Internal class used by `Order`,  reference coming soon. There is no need to access internal `Signature` API for most use cases.

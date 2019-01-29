@@ -8,27 +8,29 @@ ParadigmConnect is the primary library for interacting with the Paradigm protoco
 
 Jump into ParadigmConnect by following one of the links below:
 - [Quick start](./getting-started.md)
-- [Usage examples](./usage.md)
 - [Full API reference](./reference.md)
+- [Usage examples](./usage.md)
 - [Source code (on GitHub)](https://github.com/ParadigmFoundation/ParadigmConnect)
 
 ## Current features
 
-ParadigmConnect provides client and server-side utilities for the following actions:
+ParadigmConnect provides client and server-side utilities for the following actions (all of which can be configured for local and remote OrderStream nodes):
 
 - Constructing and signing maker orders
 - Signing orders as a poster (for OrderStream submission)
 - Submitting orders to the OrderStream via RPC
-- Subscribing to the OrderStream to parse/process orders via callback
+- Subscribing to the OrderStream to parse/process orders
 
 ## Proposed features
 
-In the future, the library may be extended to support:
+In the future, the library (or related tooling) may be extended to support:
 
 - Locking tokens to gain write access to the OrderStream
 - Auditing nodes and validators on the network
 - Submitting applications for validators
 - Voting on validator applications
+
+Until then, the above actions must be taken programmatically through libraries such as `web3`, or interacting with the Paradigm contract system's interfaces manually on services like [Etherscan](https://etherscan.io)
 
 ## Issues and proposals
 ParadigmConnect is under active development, and at this point should not be considered stable. If you find a bug, inconsistency, or vulnerability please open an issue.
