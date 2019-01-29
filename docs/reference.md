@@ -4,6 +4,8 @@ title: Reference
 
 # ParadigmConnect API Reference
 
+API reference for `paradigm-connect` and its various classes and utilities. Also see [usage and examples](./usage.md).
+
 ## Paradigm
 
 The `Paradigm` class is the top-level module used to interact with the classes and methods discussed below. You can instantiate a `Paradigm` class as follows:
@@ -50,7 +52,7 @@ Additionally, various methods are available to add cryptographic signatures to t
 ### Initialization
 
 The Order constructor accepts an options hash (Javascript Object) as an argument which accepts the following parameters:
-|Name (key)|JS Type (value)|Remarks/Description|Required|
+|Key|Value|Remarks/Description|Required|
 |-|-|-|-|
 |`subContract`|`string`|Ethereum address of the SubContract an order is for|`true`|
 |`maker`|`string`|Ethereum address of the maker for an order|`true`|
