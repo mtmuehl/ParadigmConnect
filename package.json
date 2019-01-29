@@ -20,9 +20,12 @@
     "ws": "^6.0.0"
   },
   "devDependencies": {
+    "@types/ethereumjs-util": "^5.2.0",
+    "@types/web3": "^1.0.18",
     "chai": "^4.1.2",
     "ganache-core": "^2.2.1",
     "mocha": "^5.2.0",
-    "simple-mock": "^0.8.0"
+    "simple-mock": "^0.8.0",
+    "types-ethereumjs-util": "^0.0.8"
   }
 }

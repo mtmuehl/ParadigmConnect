@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "baseUrl": "./",
+        "target": "esnext",
+        "module": "commonjs",
+        "typeRoots": ["./node_modules/@types", "./src/typings"],
+        "removeComments": true,
+        "resolveJsonModule": true,
+    }
+}

@@ -69,7 +69,7 @@ The Paradigm OrderStream network requires that anyone posting to the network sig
 
 It works essentially the same way as `make()`, except it accepts an address as an argument. If no address is provided, it will default to the `maker` address.
 
-Also, it doesn't modify the same datastructure. Instead of updating `makerValues`, it directly sets an attribute called `posterSignature`.
+Also, it doesn't modify the same data structure. Instead of updating `makerValues`, it directly sets an attribute called `posterSignature`.
 
 ```javascript
   order.prepareForPost('0xF00123Fb59d85e63be29148C4aD582FCEC886B3E');
