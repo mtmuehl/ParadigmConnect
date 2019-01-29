@@ -6,11 +6,40 @@ title: Reference
 
 ## Paradigm
 
-The `Paradigm` class is the top-level module used to interact with the classes and methods discussed below. 
+The `Paradigm` class is the top-level module used to interact with the classes and methods discussed below. You can instantiate a `Paradigm` class as follows:
 
-Instantiate a new `Paradigm` with the following:
+```js
+const Paradigm = require("paradigm-connect");
+const paradigm = new Paradigm(options);
+```
 
-...
+Where `options` is an object with the following:
+
+|Name (key) |JavaScript type|Remarks|
+|-|-|-|
+|`networkId`|`number`| Any valid Ethereum network ID (1, 3, 42, etc.)|
+|`provider`|`string`|Any valid web3 provider URL, or provider object|
+|`endpoint`|`string`|OrderStream node URL (subject to change)|
+|`orderGatewayAddress`|`string`|Optional address for the OrderGateway|
+
+An example configuration option (relatively minimal):
+
+```js
+const Paradigm = require("paradigm-connect");
+
+// create options object with desired config
+const options = {
+  networkId: 3,
+  provider: "wss://ropsten.infura.io/ws",
+  endpoint: "bs2.paradigm.market",
+};
+
+// create new instance
+const paradigm = new Paradigm(options);
+
+// destructure various classes
+const { Order, OrderGateway, OrderStream } = paradigm;
+```
 
 ## Order
 
