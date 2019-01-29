@@ -15,7 +15,7 @@ const paradigm = new Paradigm(options);
 
 Where `options` is an object with the following:
 
-|Name (key) |JavaScript type|Remarks|
+|Key|Value (JS type)|Remarks/Description|
 |-|-|-|
 |`networkId`|`number`| Any valid Ethereum network ID (1, 3, 42, etc.)|
 |`provider`|`string`|Any valid web3 provider URL, or provider object|
