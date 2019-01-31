@@ -92,7 +92,7 @@ The Order class provides utilities for constructing a properly formatted order t
 
 Additionally, various methods are available to add cryptographic signatures to the order on behalf of different parties.
 
-### `Order` constructor
+### Constructor
 
 - **Description:** 
 
@@ -129,7 +129,7 @@ Additionally, various methods are available to add cryptographic signatures to t
   1. The `makerArguments` and `takerArguments` fields can either be provided directly, or alternatively, they can automatically be pulled from the subContract if the subContract provides them.
   2. The output of `Order.prototype.toJSON` can be passed back into the `Order` constructor.
 
-### Method `Order.prototype.make()`
+### Method `make()`
 
 - **Description:** 
 
@@ -153,7 +153,7 @@ Additionally, various methods are available to add cryptographic signatures to t
   1. Will attempt to use the `Order.web3` provider to generate signature.
   2. Works with MetaMask, as well as local JSON-RPC.
 
-### Method `Order.prototype.isValid()`
+### Method `isValid()`
 
 - **Description:** 
 
@@ -176,7 +176,7 @@ Additionally, various methods are available to add cryptographic signatures to t
 
   1. Requires `isValid()` to be implemented on the specified `subContract`.
 
-### Method `Order.prototype.amountRemaining()`
+### Method `amountRemaining()`
 
 - **Description:** 
 
@@ -199,7 +199,7 @@ Additionally, various methods are available to add cryptographic signatures to t
 
   1. Requires `amountRemaining()` to be implemented on the specified `subContract`.
 
-### Method `Order.prototype.take()`
+### Method `take()`
 
 - **Description:** 
 
@@ -228,7 +228,7 @@ Additionally, various methods are available to add cryptographic signatures to t
   1. Depends on `participate()` implementation of the specified `subContract`.
   2. May request signature from `taker` to execute settlement logic.
 
-### Method `Order.prototype.prepareForPost()`
+### Method `prepareForPost()`
 
 - **Description:** 
 
@@ -258,7 +258,7 @@ Additionally, various methods are available to add cryptographic signatures to t
   1. If no `poster` is provided, a signature is requested from `Order.prototype.maker`.
   2. The `Order.prototype.posterSignature` is used to verify the poster has allocated throughput on the OrderStream.
 
-### Method `Order.prototype.estimateGasCost()`
+### Method `estimateGasCost()`
 
 - **Description:** 
 
@@ -286,7 +286,7 @@ Additionally, various methods are available to add cryptographic signatures to t
 
   1. Same call signature as `Order.prototype.take()`
 
-### Method `Order.prototype.recoverMaker()`
+### Method `recoverMaker()`
 
 - **Description:** 
 
@@ -306,7 +306,7 @@ Additionally, various methods are available to add cryptographic signatures to t
   console.log(maker === order.maker) // => 'true' for valid orders
   ```
 
-### Method `Order.prototype.recoverPoster()`
+### Method `recoverPoster()`
 
 - **Description:** 
 
@@ -329,7 +329,7 @@ Additionally, various methods are available to add cryptographic signatures to t
 
   1. Used in ParadigmCore to check poster stake/allocation.
 
-### Method `Order.prototype.toJSON()`
+### Method `toJSON()`
 
 - **Description:** 
 
@@ -392,7 +392,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. You generally will not need to instantiate `OrderGateway` manually. Use `new Paradigm(...)` instead.
 
-### Method `OrderGateway.prototype.init()`
+### Method `init()`
 
 - **Description:** 
 
@@ -419,7 +419,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   1. `OrderGateway.prototype.init()` is called during construction.
   2. There is no need to call this method manually.
 
-### Method `OrderGateway.prototype.participate()`
+### Method `participate()`
 
 - **Description:** 
 
@@ -448,7 +448,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. Generally will be called internally by `Order` class.
 
-### Method `OrderGateway.prototype.participateEstimateGas()`
+### Method `participateEstimateGas()`
 
 - **Description:** 
 
@@ -478,7 +478,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   1. Generally will be called internally by `Order` class.
   1. Same call signature as `OrderGateway.prototype.participate()`.
 
-### Method `OrderGateway.prototype.makerArguments()`
+### Method `makerArguments()`
 
 - **Description:** 
 
@@ -504,7 +504,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. Wrapper for specific SubContract implementation of `makerArguments()`.
 
-### Method `OrderGateway.prototype.takerArguments()`
+### Method `takerArguments()`
 
 - **Description:** 
 
@@ -530,7 +530,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. Wrapper for specific SubContract implementation of `takerArguments()`.
 
-### Method `OrderGateway.prototype.isValid()`
+### Method `OisValid()`
 
 - **Description:** 
 
@@ -557,7 +557,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. Wrapper for specific SubContract implementation of `isValid()`.
 
-### Method `OrderGateway.prototype.amountRemaining()`
+### Method `amountRemaining()`
 
 - **Description:** 
 
@@ -584,7 +584,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. Wrapper for specific SubContract implementation of `amountRemaining()`.
 
-### Method `OrderGateway.prototype.oneEvent()`
+### Method `oneEvent()`
 
 - **Description:** 
 
@@ -643,7 +643,7 @@ Simple class that provides basic wrappers for the OrderStream `post` and `stream
   
   1. You generally will not need to instantiate `OrderStream` manually. Use `new Paradigm(...)` instead.
 
-### Method `OrderStream.prototype.add()`
+### Method `add()`
 
 - **Description:** 
 
@@ -673,7 +673,7 @@ Simple class that provides basic wrappers for the OrderStream `post` and `stream
   
   1. For an `order` to be accepted by the network, it must be signed by a `poster` with valid stake.
 
-### Method `OrderStream.prototype.listen()`
+### Method `listen()`
 
 - **Description:** 
 
