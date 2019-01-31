@@ -6,39 +6,11 @@ title: Reference
 
 API reference for `paradigm-connect` and its various classes and utilities. Also see [usage and examples](./usage.md).
 
-- [Paradigm](#Paradigm)
-  - [Constructor](#paradigm-constructor)
-- [Order](#Order)
-  - [Constructor](#order-constructor)
-  - [make()](#method-order-prototype-make)
-  - [isValid()](#method-order-prototype-isvalid)
-  - [amountRemaining()](#method-order-prototype-amountremaining)
-  - [take()](#method-order-prototype-take)
-  - [prepareForPost()](#method-order-prototype-prepareforpost)
-  - [estimateGasCost()](#method-order-prototype-estimategascost)
-  - [recoverMaker()](#method-order-prototype-recovermaker)
-  - [recoverPoster()](#method-order-prototype-recoverposter)
-- [OrderGateway](#OrderGateway)
-  - [Constructor](#ordergateway-constructor)
-  - [init()](#method-ordergateway-prototype-init)
-  - [participate()](#method-ordergateway-prototype-participate)
-  - [participateEstimateGas()](#method-ordergateway-prototype-participateEstimateGas)
-  - [makerArguments()](#method-ordergateway-prototype-makerArguments)
-  - [takerArguments()](#method-ordergateway-prototype-takerArguments)
-  - [isValid()](#method-ordergateway-prototype-isValid)
-  - [amountRemaining()](#method-ordergateway-prototype-amountRemaining)
-  - [oneEvent()](#method-ordergateway-prototype-oneEvent)
-- [OrderStream](#OrderStream)
-  - [Constructor](#orderstream-constructor)
-  - [add()](#method-orderstream-prototype-add)
-  - [listen()](#method-orderstream-prototype-listen)
-
-
 ## Paradigm
 
-The `Paradigm` class is the top-level module and default export of `paradigm-connect`. It used to interact with the classes and methods discussed below. You can instantiate a `Paradigm` class as follows.
+The `Paradigm` class is the top-level module and default export of `paradigm-connect`. It used to interact with the classes and methods discussed below.
 
-### `Paradigm` constructor
+### Constructor
 
 - **Description:** 
 
@@ -129,7 +101,7 @@ Additionally, various methods are available to add cryptographic signatures to t
   1. The `makerArguments` and `takerArguments` fields can either be provided directly, or alternatively, they can automatically be pulled from the subContract if the subContract provides them.
   2. The output of `Order.prototype.toJSON` can be passed back into the `Order` constructor.
 
-### Method `make()`
+### `make()`
 
 - **Description:** 
 
@@ -153,7 +125,7 @@ Additionally, various methods are available to add cryptographic signatures to t
   1. Will attempt to use the `Order.web3` provider to generate signature.
   2. Works with MetaMask, as well as local JSON-RPC.
 
-### Method `isValid()`
+### `isValid()`
 
 - **Description:** 
 
@@ -176,7 +148,7 @@ Additionally, various methods are available to add cryptographic signatures to t
 
   1. Requires `isValid()` to be implemented on the specified `subContract`.
 
-### Method `amountRemaining()`
+### `amountRemaining()`
 
 - **Description:** 
 
@@ -199,7 +171,7 @@ Additionally, various methods are available to add cryptographic signatures to t
 
   1. Requires `amountRemaining()` to be implemented on the specified `subContract`.
 
-### Method `take()`
+### `take()`
 
 - **Description:** 
 
@@ -228,7 +200,7 @@ Additionally, various methods are available to add cryptographic signatures to t
   1. Depends on `participate()` implementation of the specified `subContract`.
   2. May request signature from `taker` to execute settlement logic.
 
-### Method `prepareForPost()`
+### `prepareForPost()`
 
 - **Description:** 
 
@@ -258,7 +230,7 @@ Additionally, various methods are available to add cryptographic signatures to t
   1. If no `poster` is provided, a signature is requested from `Order.prototype.maker`.
   2. The `Order.prototype.posterSignature` is used to verify the poster has allocated throughput on the OrderStream.
 
-### Method `estimateGasCost()`
+### `estimateGasCost()`
 
 - **Description:** 
 
@@ -286,7 +258,7 @@ Additionally, various methods are available to add cryptographic signatures to t
 
   1. Same call signature as `Order.prototype.take()`
 
-### Method `recoverMaker()`
+### `recoverMaker()`
 
 - **Description:** 
 
@@ -306,7 +278,7 @@ Additionally, various methods are available to add cryptographic signatures to t
   console.log(maker === order.maker) // => 'true' for valid orders
   ```
 
-### Method `recoverPoster()`
+### `recoverPoster()`
 
 - **Description:** 
 
@@ -329,7 +301,7 @@ Additionally, various methods are available to add cryptographic signatures to t
 
   1. Used in ParadigmCore to check poster stake/allocation.
 
-### Method `toJSON()`
+### `toJSON()`
 
 - **Description:** 
 
@@ -364,7 +336,7 @@ It is used internally by the [`Order` class](https://github.com/ParadigmFoundati
 
 The OrderGateway exposes the `Participation` event which can be leveraged as a [web3 event](https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#contract-event) for tracking order status.
 
-### OrderGateway constructor
+### Constructor
 
 - **Description:** 
 
@@ -392,7 +364,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. You generally will not need to instantiate `OrderGateway` manually. Use `new Paradigm(...)` instead.
 
-### Method `init()`
+### `init()`
 
 - **Description:** 
 
@@ -419,7 +391,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   1. `OrderGateway.prototype.init()` is called during construction.
   2. There is no need to call this method manually.
 
-### Method `participate()`
+### `participate()`
 
 - **Description:** 
 
@@ -448,7 +420,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. Generally will be called internally by `Order` class.
 
-### Method `participateEstimateGas()`
+### `participateEstimateGas()`
 
 - **Description:** 
 
@@ -478,7 +450,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   1. Generally will be called internally by `Order` class.
   1. Same call signature as `OrderGateway.prototype.participate()`.
 
-### Method `makerArguments()`
+### `makerArguments()`
 
 - **Description:** 
 
@@ -504,7 +476,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. Wrapper for specific SubContract implementation of `makerArguments()`.
 
-### Method `takerArguments()`
+### `takerArguments()`
 
 - **Description:** 
 
@@ -530,7 +502,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. Wrapper for specific SubContract implementation of `takerArguments()`.
 
-### Method `OisValid()`
+### `isValid()`
 
 - **Description:** 
 
@@ -557,7 +529,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. Wrapper for specific SubContract implementation of `isValid()`.
 
-### Method `amountRemaining()`
+### `amountRemaining()`
 
 - **Description:** 
 
@@ -584,7 +556,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
   
   1. Wrapper for specific SubContract implementation of `amountRemaining()`.
 
-### Method `oneEvent()`
+### `oneEvent()`
 
 - **Description:** 
 
@@ -615,7 +587,7 @@ The OrderGateway exposes the `Participation` event which can be leveraged as a [
 
 Simple class that provides basic wrappers for the OrderStream `post` and `stream` API's. Enables submission of signed maker orders, and subscription to output event stream of valid orders from the network.
 
-### OrderStream constructor
+### Constructor
 
 - **Description:** 
 
@@ -643,7 +615,7 @@ Simple class that provides basic wrappers for the OrderStream `post` and `stream
   
   1. You generally will not need to instantiate `OrderStream` manually. Use `new Paradigm(...)` instead.
 
-### Method `add()`
+### `add()`
 
 - **Description:** 
 
@@ -673,7 +645,7 @@ Simple class that provides basic wrappers for the OrderStream `post` and `stream
   
   1. For an `order` to be accepted by the network, it must be signed by a `poster` with valid stake.
 
-### Method `listen()`
+### `listen()`
 
 - **Description:** 
 
@@ -709,7 +681,3 @@ Simple class that provides basic wrappers for the OrderStream `post` and `stream
        return; // return 'null' (a.k.a void)
      }
      ```
-
-## Signature
-
-Internal class used by `Order`,  reference coming soon. There is no need to access internal `Signature` API for most use cases.
