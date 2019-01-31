@@ -6,6 +6,8 @@ title: Reference
 
 API reference for `paradigm-connect` and its various classes and utilities. Also see [usage and examples](./usage.md).
 
+ParadigmConnect's source code can be found in [its GitHub repository](https://github.com/ParadigmFoundation/ParadigmConnect).
+
 ## Paradigm
 
 The `Paradigm` class is the top-level module and default export of `paradigm-connect`. It used to interact with the classes and methods discussed below.
