@@ -10,18 +10,19 @@
   "license": "ISC",
   "dependencies": {
     "bn.js": "^4.11.8",
-    "ethereumjs-abi": "^0.6.5",
+    "ethereumjs-abi": "^0.6.6",
     "ethereumjs-util": "^5.2.0",
     "isomorphic-ws": "^4.0.1",
     "node-fetch": "^2.2.0",
-    "paradigm-protocol-contracts": "0.0.5",
+    "paradigm-contracts": "0.0.5",
     "simple-erc20": "^1.0.6",
-    "web3": "^1.0.0-beta.36",
-    "ws": "^6.0.0"
+    "web3": "^1.0.0-beta.46",
+    "ws": "^6.1.4"
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "ganache-core": "^2.2.1",
+    "chai-as-promised": "^7.1.1",
+    "ganache-core": "^2.4.0",
     "mocha": "^5.2.0",
     "simple-mock": "^0.8.0"
   }

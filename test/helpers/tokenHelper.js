@@ -1,5 +1,5 @@
 const SimpleERC20 = require('simple-erc20');
-const TokenContractInfo = require('paradigm-protocol-contracts/build/contracts/DIGMToken');
+const TokenContractInfo = require('paradigm-contracts/build/contracts/DigmToken');
 
 module.exports = async (variableName, tokenName, tokenSymbol, from) => {
 
