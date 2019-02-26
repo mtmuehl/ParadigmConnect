@@ -1,5 +1,5 @@
 const OrderGateway = require('../lib/OrderGateway');
-const OrderGatewayContract = require('paradigm-contracts/build/contracts/OrderGateway');
+const OrderGatewayContract = require('paradigm-contracts').contracts.OrderGateway;
 
 
 describe('OrderGateway', () => {
