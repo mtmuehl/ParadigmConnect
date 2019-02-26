@@ -1,4 +1,3 @@
-const Bank = require('./lib/bank');
 const Web3 = require('web3');
 const OrderGateway = require('./lib/OrderGateway');
 const OrderStream = require('./lib/OrderStream.js');
@@ -14,7 +13,6 @@ class Paradigm {
     let endpoint = options.orderStreamURL || 'bs2.paradigm.market';
     this.orderStream = new OrderStream(endpoint);
     this.orderGateway = new OrderGateway(options);
-    this.bank = new Bank(this.web3);
     Order.prototype.web3 = this.web3;
     Order.prototype.orderGateway = this.orderGateway;
     this.Order = Order;
