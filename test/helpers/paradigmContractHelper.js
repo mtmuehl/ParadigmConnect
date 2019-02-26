@@ -7,5 +7,5 @@ module.exports = async () => {
         JSON.stringify(BasicTradeSubContractConfig.makerArguments),
         JSON.stringify(BasicTradeSubContractConfig.takerArguments)
       ] }).send({ from: accounts[0], gas: 4500000 });
-  global.subContract = basicTradeSubContract._address;
+  global.subContract = basicTradeSubContract.options.address;
 };
