@@ -14,9 +14,10 @@
     "ethereumjs-util": "^5.2.0",
     "isomorphic-ws": "^4.0.1",
     "node-fetch": "^2.2.0",
-    "paradigm-contracts": "0.0.5",
+    "paradigm-contracts": "^0.1.0",
     "simple-erc20": "^1.0.6",
-    "web3": "^1.0.0-beta.46",
+    "truffle-contract": "^4.0.6",
+    "web3": "^1.0.0-beta.36",
     "ws": "^6.1.4"
   },
   "devDependencies": {
