@@ -16,8 +16,8 @@ describe('OrderGateway', () => {
     let makerArguments = await orderGateway.makerArguments(subContract);
     let takerArguments = await orderGateway.takerArguments(subContract);
 
-    await bank.giveMaxAllowanceFor(TKA, subContract, maker);
-    await bank.giveMaxAllowanceFor(TKB, subContract, taker);
+    tka.methods.approve(subContract, MAX_UINT).send({ from: maker });
+    tkb.methods.approve(subContract, MAX_UINT).send({ from: taker });
 
     let makerValues = {
       signer: maker,
