@@ -29,7 +29,7 @@ export class Signature {
    */
   public static async generate(web3: Web3, messageHex: string, signer: string): Promise<object> {
     let raw, signature;
-    [raw, signature] = await this.sign(web3, messageHex, signer);
+    [raw, signature] = await Signature.sign(web3, messageHex, signer);
 
     if(!Signature.validate(messageHex, signature, signer))
       signature = ethUtil.fromRpcSig(raw);
@@ -37,7 +37,7 @@ export class Signature {
     if(!Signature.validate(messageHex, signature, signer))
       throw new Error('Bad signature.');
 
-    return this.toJSON(signature);
+    return Signature.toJSON(signature);
   }
 
 
@@ -50,7 +50,7 @@ export class Signature {
    * @returns              {boolean} whether or not the signature is valid
    */
   public static validate(messageHex: string, signature: VRS, signer: string): boolean {
-    return this.recoverAddress(messageHex, signature) === signer.toLowerCase();
+    return Signature.recoverAddress(messageHex, signature) === signer.toLowerCase();
   }
 
   /**
@@ -79,10 +79,10 @@ export class Signature {
    * @returns              {[string, VRS]} tuple of raw signature and signature as VRS object
    */
   private static async sign(web3: Web3, messageHex: string, signer: string): Promise<[string, VRS]> {
-    const raw = await this.getRaw(web3, messageHex, signer);
-    const buffer     = this.getBuffer(raw);
+    const raw = await Signature.getRaw(web3, messageHex, signer);
+    const buffer     = Signature.getBuffer(raw);
 
-    return [raw, this.setVRS(buffer)];
+    return [raw, Signature.setVRS(buffer)];
   }
 
   /**
